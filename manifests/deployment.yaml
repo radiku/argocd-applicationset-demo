@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: echo-app
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: echo-app
+
+  template:
+    metadata:
+      labels:
+        app: echo-app
+
+    spec:
+      containers:
+
+      - name: echo-app
+        image: hashicorp/http-echo:1.0.0
+        args:
+          - "-text=Hello from ArgoCD ApplicationSet"
+
+        ports:
+          - containerPort: 5678
+
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5678
+
+          initialDelaySeconds: 5
+          periodSeconds: 10
+
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 5678
+
+          initialDelaySeconds: 10
+          periodSeconds: 20
